@@ -1,2 +1,46 @@
-<h1>BankAccounts#index</h1>
-<p>Find me in app/views/bank_accounts/index.html.erb</p>
+<h1>Bank Accounts</h1>
+<table border="1px">
+    <tr>
+        <th>Bank Account</th>
+        <th>Balance</th>
+        <th>Enforcing min balance?</th>
+        <th>Min balance amount</th>
+    </tr>
+    <% @bank_accounts.each do | account | %>
+        <tr>
+            <td>
+                <%= account.name %>
+            </td>
+            <td>
+                <%= account.balance %>
+            </td>
+            <td>
+                <%= account.enforce_min_balance ? "true" : "false" %>
+            </td>
+            <td>
+                <%= account.min_balance || "N/A" %>
+            </td>
+        </tr>
+        <% end %>
+</table>
+<h2>Invest in Mutual Fund</h2>
+<form action="/invest" method="post">
+    <input type="number" name="investment_amount" placeholder="enter investment amount" required><br />
+    <input type="submit" value="Submit">
+</form>
+<% if session[:result] %>
+    <h3>Investment Allocation</h3>
+    <% if session[:result]=="NO MATCH" %>
+        <p><strong>NO MATCH</strong></p>
+        <% else %>
+            <ul>
+                <% session[:result].each do |allocation| %>
+                    <li><strong>
+                            <%= allocation[:name] || allocation["name"] %>
+                        </strong>: ₹<%= allocation[:amount] || allocation["amount"] %>
+                    </li>
+                    <% end %>
+            </ul>
+            <% end %>
+                <% session.delete(:result) %> <!-- Clear after displaying -->
+                    <% end %>
