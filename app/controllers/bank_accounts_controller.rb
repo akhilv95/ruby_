@@ -21,6 +21,8 @@ class BankAccountsController < ApplicationController
   private
 
   def allocate_funds(accounts, amount)
+    total_available = accounts.sum { | acc | acc[:available] }
+    return [] if amount > total_available
   
     accounts.sort_by! { |acc| acc[:available] }
     if (match = accounts.find { |acc| acc[:available] == amount })
@@ -35,7 +37,7 @@ class BankAccountsController < ApplicationController
     remaining_amount = amount
 
     accounts.sort_by! { |acc| -acc[:available] }
-  
+
     largest_contributor = accounts.find { |acc| acc[:available] < amount }
     if largest_contributor
       selected_accounts << { name: largest_contributor[:name], amount: largest_contributor[:available] }
