@@ -21,22 +21,16 @@ class BankAccountsController < ApplicationController
   private
 
   def allocate_funds(accounts, amount)
-    puts " Requested Investment Amount: #{amount}"
   
     accounts.sort_by! { |acc| acc[:available] }
-    puts "Accounts Sorted (Lowest First for Exact Match): #{accounts.inspect}"
-  
     if (match = accounts.find { |acc| acc[:available] == amount })
-      puts " Exact Match Found: #{match[:name]} - #{amount}"
       return [{ name: match[:name], amount: amount }]
     end
   
     if (greater_match = accounts.find { |acc| acc[:available] > amount })
-      puts " Single Account Found (Greater Balance): #{greater_match[:name]} - #{amount}"
       return [{ name: greater_match[:name], amount: amount }]
     end
   
-    puts " No Single Match Found, Trying Multiple Accounts..."
     selected_accounts = []
     remaining_amount = amount
 
@@ -46,14 +40,13 @@ class BankAccountsController < ApplicationController
     if largest_contributor
       selected_accounts << { name: largest_contributor[:name], amount: largest_contributor[:available] }
       remaining_amount -= largest_contributor[:available]
-      puts " Selected Largest Contributor: #{largest_contributor[:name]} - #{largest_contributor[:available]}"
     end
   
     accounts.sort_by! { |acc| acc[:available] } 
     smallest_match = accounts.find { |acc| acc[:available] >= remaining_amount }
     if smallest_match
       selected_accounts << { name: smallest_match[:name], amount: remaining_amount }
-      puts " Selected Smallest Contributor: #{smallest_match[:name]} - #{remaining_amount}"
+     
       return selected_accounts
     end
   
@@ -63,17 +56,12 @@ class BankAccountsController < ApplicationController
       deduction = [acc[:available], remaining_amount].min  
       selected_accounts << { name: acc[:name], amount: deduction }
       remaining_amount -= deduction  
-  
-      puts " Deducting #{deduction} from #{acc[:name]}, Remaining: #{remaining_amount}"
-  
       break if remaining_amount == 0  
     end
   
     if remaining_amount == 0
-      puts " Successful Allocation: #{selected_accounts.inspect}"
       return selected_accounts
     else
-      puts " No Exact Match Found"
       return []
     end
   end
