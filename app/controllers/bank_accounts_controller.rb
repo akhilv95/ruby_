@@ -21,10 +21,10 @@ class BankAccountsController < ApplicationController
   private
 
   def allocate_funds(accounts, amount)
-    puts "🔹 Requested Investment Amount: #{amount}"
+    puts " Requested Investment Amount: #{amount}"
   
     accounts.sort_by! { |acc| acc[:available] }
-    puts "🔹 Accounts Sorted (Lowest First for Exact Match): #{accounts.inspect}"
+    puts "Accounts Sorted (Lowest First for Exact Match): #{accounts.inspect}"
   
     if (match = accounts.find { |acc| acc[:available] == amount })
       puts " Exact Match Found: #{match[:name]} - #{amount}"
